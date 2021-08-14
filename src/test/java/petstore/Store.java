@@ -13,7 +13,7 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 // 3 - Classe
 public class Store {
     // 3.1 - Atributos
-    String uri = "https://petstore.swagger.io/v2/store/order";
+    String uri = "https://petstore.swagger.io/v2/store";
 
     // 3.2 - Métodos e Funções
     public String lerJson(String caminhoJson) throws IOException {
@@ -21,7 +21,7 @@ public class Store {
     }
 
     // Testes
-    @Test
+    @Test (priority = 1)
     public void realizarPedido() throws IOException {
         String jsonBody = lerJson("db/order1.json");
 
@@ -30,7 +30,7 @@ public class Store {
                 .log().all()
                 .body(jsonBody)
         .when()
-                .post(uri)
+                .post(uri + "/order")
         .then()
                 .log().all()
                 .statusCode(200)
@@ -39,4 +39,19 @@ public class Store {
         ;
     }
 
+    @Test (priority = 2)
+    public void buscarOrdemPorId(){
+        String orderId = "1";
+
+        given()
+                .contentType("application/json")
+                .log().all()
+        .when()
+                .get(uri + "/order/" + orderId)
+        .then()
+                .log().all()
+                .statusCode(200)
+                .body("petId", is(1202031974))
+        ;
+    }
 }
